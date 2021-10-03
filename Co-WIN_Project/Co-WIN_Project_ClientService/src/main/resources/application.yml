@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: co-win-clientservice
+  config:
+    import: optional:configserver:http://localhost:9296
+  profiles:    active: productionserver:  port: 9193
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

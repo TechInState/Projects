@@ -1,0 +1,19 @@
+
+
+1. Co-WIN_Project_ConfigService
+Repository: co-win-project-configserver
+Port: 9296
+
+
+2. Co-WIN_Project_SessionService:
+App name: co-win-sessionservice
+Config file: co-win-sessionservice-production
+Port: 9191
+
+
+
+Co-WIN_Project_DataService
+Co-WIN_Project_EurekaService
+Co-WIN_Project_GatewayService
+
+co-win-project

@@ -1,0 +1,12 @@
+1632238113616	Rename package 'com.cowin.project.data.service.entity.state'
+1632238549938	Rename package 'com.cowin.project.data.service.entity.states'
+1632239034504	Rename type 'States'
+1632239282698	Rename type 'State_District'
+1632300667275	Rename package 'com.cowin.project.data.service.entity.repositories'
+1632331053173	Rename package 'com.cowin.project.data.service.entity.entities'
+1632390130039	Copy compilation units
+1632392046433	Delete element
+1632407320800	Rename type 'DataService'
+1632407385199	Delete element
+1632556149652	Copy package
+1632582206304	Rename package 'com.cowin.project.data.dataservice'

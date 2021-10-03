@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: co-win-dataservice
+  config:
+    import: optional:configserver:http://localhost:9296
+  profiles:    active: production  server:  port: 9192
+  tomcat:    connection-timeout: 600000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

@@ -1,0 +1,11 @@
+server:
+  port: 9190
+
+logging:  pattern:    console: "%clr(%d{HH:mm:ss.SSS}){blue} %clr(---){faint} %clr([%15.15t]){yellow} %clr(:){red} %clr(%m){faint}%n"
+
+spring:  application:    name: API-GATEWAYSERVICE
+  config:    import:    - optional:configserver:http://localhost:9296
+  profiles:
+    active: production
+  cloud:    gateway:      routes:      - id: CO-WIN-SESSIONSERVICE
+        uri: lb://CO-WIN-SESSIONSERVICE        predicates:        - Path=/session/**
