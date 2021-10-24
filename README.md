@@ -12,3 +12,6 @@ Project to display available slots/sessions for CoWIN vaccinations
 - JPA and H2 Database
 - ModelMapper
 - Thymeleaf
+
+###Project output shown below: 
+![Project Output](/Co-WIN_Project/Images/Available_Sessions.JPG)
