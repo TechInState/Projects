@@ -13,7 +13,21 @@ Project to display available slots/sessions for CoWIN vaccinations
 - ModelMapper
 - Thymeleaf
 
-### Project output shown below: 
+## Project output shown below: 
 
 
 ![Project Output](/Co-WIN_Project/Images/Available_Sessions.JPG)
+
+
+### TODO:
+- Add Loggers
+- Add Zipkin and Cloud Sleuth
+- Client Service should use Config service for URLs
+- Use Gateway for DataService and SessionService
+- Modify/enhance GUI 
+- Restart session functionality in GUI
+- Search for multiple districts
+- Alert on particular center
+- Timer based search
+- Optional usage for return values from APIs
+- Exception handling
