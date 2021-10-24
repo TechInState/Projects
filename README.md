@@ -12,5 +12,5 @@ Project to display available slots/sessions for CoWIN vaccinations
 	- [JPA and H2 Database](#JPA_H2)
 	- [ModelMapper](#ModelMapper)
 	- [Thymeleaf](#Thymeleaf)
-- [Eureka Server]
-- [Eureka Client]
+- Eureka Server
+- Eureka Client
