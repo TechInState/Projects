@@ -28,6 +28,8 @@ Project to display available slots/sessions for CoWIN vaccinations
 - Restart session functionality in GUI
 - Search for multiple districts
 - Alert on particular center
-- Timer based search
+- Timer/scheduler
+- Email support
 - Optional usage for return values from APIs
 - Exception handling
+- Code cleanup
