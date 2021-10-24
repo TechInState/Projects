@@ -3,6 +3,7 @@ package com.cowin.project.data.service.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -29,7 +30,7 @@ import com.cowin.project.data.service.entities.StateDistrictEntity;
 import com.cowin.project.data.service.entities.StatesEntity;
 
 @RestController
-@RequestMapping("/api/dataservice")
+@RequestMapping("/api/DataService")
 public class DataServiceController {
 	
 	@Autowired
@@ -62,19 +63,28 @@ public class DataServiceController {
     		return new ResponseEntity<StatesDTO[]>(new ArrayList<StatesDTO>().toArray(StatesDTO[]::new), HttpStatus.NOT_FOUND);
 
     }
-
-    @GetMapping(value = "/getDistrictsForState/{state_id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Integer[]> getDistrictsForState(@PathVariable("state_id") int state_id) throws InterruptedException, ExecutionException {
-
-    	// Get districts for the state from database
-    	List<Integer> list_districts = dataService.getDistrictIdsByStateId(state_id);
-    	
-		// Remove nulls before sending
-		return new ResponseEntity<Integer[]>(list_districts.stream()
-				.filter(Objects::nonNull)
-				.toArray(Integer[]::new), HttpStatus.OK);
-    }    
     
+    @GetMapping(value = "/getAllStateNames", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String[]> getAllStateNames() {
+
+    	if (dataService.getAllStates().size() > 0)
+    	{
+    		// Send the DTO List converted from Entity
+    		List<String> listStates = dataService.getAllStateNames();
+
+    		// Remove nulls before sending
+    		return new ResponseEntity<String[]>(listStates.stream().filter(Objects::nonNull).toArray(String[]::new), HttpStatus.FOUND);
+    	}
+    	else
+    		return new ResponseEntity<String[]>(new ArrayList<String>().toArray(String[]::new), HttpStatus.NOT_FOUND);
+    }
+    
+    @GetMapping(value = "/getStateIdForStateName/{state_name}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Integer> getStateIdForStateName(@PathVariable("state_name") String state_name) throws InterruptedException, ExecutionException {
+    	Optional<Integer> state_id = dataService.getStateIdByName(state_name);
+		return new ResponseEntity<Integer>(state_id.get(), HttpStatus.FOUND);
+    }
+
     @GetMapping(value = "/getAllStateDistricts", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StateDistrictDTO[]> getAllStateDistricts() {
 
@@ -91,6 +101,36 @@ public class DataServiceController {
     	else
     		return new ResponseEntity<StateDistrictDTO[]>(new ArrayList<StateDistrictDTO>().toArray(StateDistrictDTO[]::new), HttpStatus.NOT_FOUND);
     }
+    
+    @GetMapping(value = "/getDistrictsForState/{state_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Integer[]> getDistrictsForState(@PathVariable("state_id") int state_id) throws InterruptedException, ExecutionException {
+
+    	// Get districts for the state from database
+    	List<Integer> list_districts = dataService.getDistrictIdsByStateId(state_id);
+    	
+		// Remove nulls before sending
+		return new ResponseEntity<Integer[]>(list_districts.stream()
+				.filter(Objects::nonNull)
+				.toArray(Integer[]::new), HttpStatus.FOUND);
+    }    
+    
+    @GetMapping(value = "/getDistrictNamesForState/{state_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String[]> getDistrictNamesForState(@PathVariable("state_id") int state_id) throws InterruptedException, ExecutionException {
+
+    	// Get districts for the state from database
+    	List<String> list_districts = dataService.getDistrictNamesByStateId(state_id);
+    	
+		// Remove nulls before sending
+		return new ResponseEntity<String[]>(list_districts.stream()
+				.filter(Objects::nonNull)
+				.toArray(String[]::new), HttpStatus.FOUND);
+    }
+    
+    @GetMapping(value = "/getDistrictIdForDistrictName/{district_name}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Integer> getDistrictIdForDistrictName(@PathVariable("district_name") String district_name) throws InterruptedException, ExecutionException {
+    	Optional<Integer> district_id = dataService.getDistrictIdByDistrictName(district_name);
+		return new ResponseEntity<Integer>(district_id.get(), HttpStatus.FOUND);
+    }    
 
     @PostMapping(value="addState", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_HTML_VALUE)
     public ResponseEntity<String> addState(@RequestBody StatesDTO stateDTO) {
@@ -107,23 +147,25 @@ public class DataServiceController {
     @Transactional(timeout = 300)
     public ResponseEntity<String> addStatesList(@RequestBody StatesDTO[] states) {
     	
-    	System.out.println(String.format("Todat states received: %d", states.length));
+    	System.out.println(String.format("Total states received: %d", states.length));
     	
     	//Check if we have already updated states in the database
-    	if (dataService.getAllStates().stream().count() > 0)
-    		return new ResponseEntity<String>(String.format("States already updated with count: %d",  states.length), HttpStatus.FOUND);
-
-    	for(StatesDTO state: states)
+    	if (dataService.getAllStates().stream().count() <= 0)
     	{
-        	// Convert DTO to Entity
-        	StatesEntity stateEntity = modelMapper.map(state, StatesEntity.class);
-        	Long id = dataService.addToStates(stateEntity);
-        	System.out.println(String.format("Data Added for State: %d, %s", stateEntity.getState_id(), stateEntity.getState_name()));
-    	}
-    	
-    	System.out.println(String.format("All states added: %d", states.length));
+    		for(StatesDTO state: states)
+    		{
+    			// Convert DTO to Entity
+    			StatesEntity stateEntity = modelMapper.map(state, StatesEntity.class);
+    			Long id = dataService.addToStates(stateEntity);
+    			System.out.println(String.format("Data Added for State: %d, %s", stateEntity.getState_id(), stateEntity.getState_name()));
+    		}
 
-    	return new ResponseEntity<String>(String.format("States successfully added with count: %d",  states.length), HttpStatus.CREATED);
+    		System.out.println(String.format("All states added: %d", states.length));
+
+    		return new ResponseEntity<String>(String.format("States successfully added with count: %d",  states.length), HttpStatus.CREATED);
+    	}
+    	else
+    		return new ResponseEntity<String>(String.format("States already added"), HttpStatus.CREATED);
     }    
     
     @RequestMapping(value = "/addStateDistricts", method = RequestMethod.POST)
@@ -135,10 +177,13 @@ public class DataServiceController {
     	{
         	// Convert DTO to Entity
         	StateDistrictEntity state_district = modelMapper.map(district, StateDistrictEntity.class);
-        	Long id = dataService.addToStateDistrict(state_district);
+        	//if (dataService.getDistrictIdsByStateId(state_district.getState_id()).stream().count() <= 0)
+        	{
+        		Long id = dataService.addToStateDistrict(state_district);
 
-        	System.out.println(String.format("District data added for state: %d, %s with id: %d", state_district.getDistrict_id(), 
-        			state_district.getDistrict_name(), id));
+        		System.out.println(String.format("District data added for state: %d, %s with id: %d", state_district.getDistrict_id(), 
+        				state_district.getDistrict_name(), id));
+        	}
     	}
 
     	return new ResponseEntity<String>(String.format("Districts successfully added with count: %d",  districts.length), HttpStatus.CREATED);

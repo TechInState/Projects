@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Future;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cowin.project.data.service.entities.StateDistrictEntity;
 
@@ -32,4 +34,9 @@ public interface StateDistrictRepository extends BaseRepository<StateDistrictEnt
     Future<Optional<Integer>> findDistrictIdByDistrictName(@Param("district_name") String district_name);
 	
 	Optional<StateDistrictEntity> findById(Long id);
+	
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM StateDistrictEntity")
+    void deleteAllStateDistricts();
 }

@@ -29,6 +29,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cowin.project.sessionservice.dtos.StateDistrictDTO;
@@ -50,6 +52,7 @@ URL_GETSESBYDISTRICT = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/pu
 
 @RestController
 @RefreshScope
+@RequestMapping(value="/api/SessionService")
 public class SessionServiceController {
 	
 	@Value("${cowin.states_url}")
@@ -106,7 +109,7 @@ public class SessionServiceController {
 		return new ResponseEntity<String>("No Content", HttpStatus.NO_CONTENT);
 	}
 	
-	@GetMapping(value = "session/getStates", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/getStates", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<StatesDTO[]> getStates() throws IOException{
 
 		ResponseEntity<String> response = getForSession(states_url);
@@ -138,7 +141,7 @@ public class SessionServiceController {
 		return new ResponseEntity<StatesDTO[]>(states_list.toArray(StatesDTO[]::new), HttpStatus.OK);
 	}
 
-	@GetMapping(value="session/getDistrictsForState/{state_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value="/getDistrictsForState/{state_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<StateDistrictDTO[]> getDistricts(@PathVariable("state_id") int state_id){
 		
 		String state_district_url = String.format("%s%c%d", districts_url, '/', state_id);
@@ -167,20 +170,35 @@ public class SessionServiceController {
 			    state_districts_list.add(new StateDistrictDTO(state_id, district_id, district_name));
 			}
 		}
-		
+
 		return new ResponseEntity<StateDistrictDTO[]>(state_districts_list.toArray(StateDistrictDTO[]::new), HttpStatus.OK);
 	}
 
-	@GetMapping(value="session/getSessionsForPin/{pin_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value="/getSessionsForPin/{pin_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getSessionsForPin(@PathVariable("pin_id") int pin_id){
 
 		return new ResponseEntity<String>("sessionsbypin_url = " + sessionsbypin_url, HttpStatus.OK);
 	}
-	
-	@GetMapping(value="session/getSessionsForDistrict/{district_id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> getSessionsForDistrict(@PathVariable("district_id") int district_id){
 
-		return new ResponseEntity<String>("sessionsbypin_url = " + sessionsbypin_url, HttpStatus.OK);
+	@GetMapping(value="/getSessionsForDistrict", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getSessionsForDistrict(@RequestParam(name = "district_id") int district_id, 
+			@RequestParam(name = "date") String date){
+		
+		//http://localhost:9191/session/getDistrictsForState?district_id=1&date=04-10-2021
+
+		String session_district_url = String.format("%s?district_id=%d&date=%s", sessionsbydistrict_url, district_id, date);
+		
+		//https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict/104-10-2021
+		//https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id={}&date={}".format(395, "10-10-2021")
+		//https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=395&date=04-10-2021
+
+		ResponseEntity<String> response = getForSession(session_district_url);
+
+		if(response.getStatusCode() == HttpStatus.OK)
+		{
+			return new ResponseEntity<String>(response.getBody(), HttpStatus.OK);
+		}
+
+		return new ResponseEntity<String>("sessionsbydistrict_url = " + sessionsbypin_url, HttpStatus.OK);
 	}
-
 }

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Vaccine Sessions</title>
+   	<style type="text/css">
+   		#sessionscontainer{
+         margin-top: 50px;
+       }
+   	</style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <section id="header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Find Available Vaccine Sessions</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto">
+                </ul>
+              </div>
+          </nav>
+    </section>
+	<div class="container">
+	    <div class="row">
+	            <form action="#" data-th-action="@{/ClientService/getInfo}" method="post" th:object = "${client_sessions_data}">
+	            <div style="float:left;">
+	            <div class="col">
+	                <div class="form-group">
+	                    <label for="states">Select State</label>
+	                    <select class="form-control selectpicker" th:field="*{state_names}" id="states">
+	                        <option value="">Select State</option>
+	                        <option th:each="state : ${client_sessions_data.state_names}"
+	                                th:value="${state}"
+	                                th:text="${state}">
+	                        </option>
+	                    </select>
+	                </div>
+	                <button class="btn btn-info margin-top: 150px" type="submit" name="action" value="districtsinfo">Get Districts</button>
+	               </div>
+	               </div>
+	               <div style="float:left;">
+	               <div class="col">
+	                <div class="form-group">
+	                    <label for="districts">Select District/s</label>	                    
+	                    <select class="form-control selectpicker" th:field="*{district_names}" id="districts" multiple>
+	                        <option th:each="district : ${client_sessions_data.district_names}"
+	                                th:value="${district}"
+	                                th:text="${district}">
+	                        </option>
+	                    </select>
+	                </div>
+	               </div>
+	               	<div style="float:left;">
+	                </div>
+	               </div>
+	               <div style="float:left;">
+	               <div class="col">
+	                <div class="form-group">
+	                    <label for="sessiondate">Select Date</label>
+	                    <input type="text" class="form-control" id="sessiondate" autocomplete="off" th:field="*{session_date}"/>
+	                    <div class="input-group-append">
+	                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+	                    </div>
+	                </div>
+	               </div>
+	               	<div style="float:left;">
+	                </div>
+	               </div>	               
+	               <button class="btn btn-info margin-top: 200px" type="submit" name="action" value="sessionsinfo">Get Sessions</button>
+	            </form>
+	        </div>
+	    </div>
+    <section id="sessionscontainer">
+        <div class="row">
+          <div class="col-md-2"></div>
+          <div class="col-md-8">
+              <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">State</th>
+                      <th scope="col">District</th>
+                      <th scope="col">Center</th>                      
+                      <th scope="col">Pin Code</th>
+                      <th scope="col">Vaccine</th>
+                      <th scope="col">Minimum Age</th>
+                      <th scope="col">Doses Available</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:each="entry : ${client_sessions_data.sessions}">
+                      <td th:text=${entry.state_name}></td>
+                      <td th:text=${entry.district_name}></td>
+                      <td th:text=${entry.center_name}></td>
+                      <td th:text=${entry.pincode}></td>
+                      <td th:text=${entry.vaccine}></td>
+                      <td th:text=${entry.min_age_limit}></td>
+                      <td th:text=${entry.avail_capacity}></td>
+                    </tr>
+                  </tbody>
+                </table>
+          </div>
+          <div class="col-md-2"></div>
+        </div>
+    </section>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
